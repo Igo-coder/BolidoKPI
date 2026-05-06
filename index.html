@@ -9,7 +9,6 @@
   :root {
     --bg: #0d0f14;
     --surface: #141820;
-    --surface2: #1c2230;
     --border: #252d3d;
     --accent: #e8f542;
     --accent2: #42d4f5;
@@ -19,368 +18,296 @@
     --font-mono: 'Space Mono', monospace;
     --font-body: 'DM Sans', sans-serif;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* Noise texture overlay */
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.3;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
   }
-
   .app { position: relative; z-index: 1; max-width: 430px; margin: 0 auto; padding: 0 0 80px; }
 
   /* Header */
-  .header {
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header-left { display: flex; align-items: baseline; gap: 8px; }
-  .logo { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
-  .logo span { color: var(--muted); font-size: 12px; font-weight: 400; }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--accent); }
+  .logo span { color: var(--muted); font-size: 11px; font-weight: 400; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
   /* Loading */
-  .loading {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 60vh; gap: 16px;
-  }
-  .loading-bar {
-    width: 120px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden;
-  }
-  .loading-bar::after {
-    content: ''; display: block; height: 100%; width: 40%;
-    background: var(--accent); border-radius: 2px;
-    animation: load 1.2s ease-in-out infinite;
-  }
-  @keyframes load { 0%{transform:translateX(-100%)} 100%{transform:translateX(350%)} }
-  .loading p { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; gap: 14px; }
+  .loading-bar { width: 100px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .loading-bar::after { content: ''; display: block; height: 100%; width: 35%; background: var(--accent); border-radius: 2px; animation: load 1.2s ease-in-out infinite; }
+  @keyframes load { 0%{transform:translateX(-100%)} 100%{transform:translateX(380%)} }
+  .loading p { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
 
   /* Error */
-  .error-box {
-    margin: 20px; padding: 16px; border: 1px solid var(--danger);
-    border-radius: 10px; background: rgba(245,66,66,0.08);
-    font-size: 13px; color: var(--danger); line-height: 1.5;
-  }
+  .error-box { margin: 20px; padding: 16px; border: 1px solid var(--danger); border-radius: 10px; background: rgba(245,66,66,0.08); font-size: 13px; color: var(--danger); line-height: 1.6; }
 
-  /* KM Banner */
-  .km-banner {
-    margin: 16px 16px 0;
-    padding: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    position: relative;
-    overflow: hidden;
+  /* Hero: próxima carga */
+  .hero {
+    margin: 16px 16px 0; padding: 22px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 14px; position: relative; overflow: hidden;
     opacity: 0; animation: fadeUp 0.4s ease forwards 0.1s;
   }
-  .km-banner::after {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 150px; height: 150px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(232,245,66,0.12) 0%, transparent 70%);
+  .hero::after {
+    content: ''; position: absolute; top: -50px; right: -50px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,245,66,0.10) 0%, transparent 70%);
     pointer-events: none;
   }
-  .km-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
-  .km-value { font-family: var(--font-mono); font-size: 42px; font-weight: 700; color: var(--accent); line-height: 1; }
-  .km-value span { font-size: 16px; color: var(--muted); }
-  .km-sub { margin-top: 8px; font-size: 12px; color: var(--muted); display: flex; gap: 12px; }
+  .hero-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 8px; }
+  .hero-date { font-family: var(--font-mono); font-size: 36px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .hero-sub { margin-top: 10px; display: flex; gap: 16px; font-size: 12px; color: var(--muted); }
+  .hero-sub strong { color: var(--text); }
 
   /* Alerta reserva */
-  .reserva-alert {
-    margin: 10px 16px 0;
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: 1px solid;
-    font-size: 13px;
-    display: flex; align-items: center; gap: 10px;
+  .alert {
+    margin: 10px 16px 0; padding: 11px 14px; border-radius: 10px; border: 1px solid;
+    font-size: 12px; display: flex; align-items: center; gap: 10px;
     opacity: 0; animation: fadeUp 0.4s ease forwards 0.2s;
   }
-  .reserva-alert.ok { border-color: rgba(66,212,245,0.3); background: rgba(66,212,245,0.07); color: var(--accent2); }
-  .reserva-alert.warn { border-color: rgba(245,66,66,0.4); background: rgba(245,66,66,0.08); color: var(--danger); }
-  .reserva-icon { font-size: 16px; flex-shrink: 0; }
+  .alert.ok { border-color: rgba(66,212,245,0.3); background: rgba(66,212,245,0.07); color: var(--accent2); }
+  .alert.warn { border-color: rgba(245,66,66,0.4); background: rgba(245,66,66,0.08); color: var(--danger); }
 
-  /* KPI Grid */
-  .kpi-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin: 10px 16px 0;
+  /* Odómetro secundario */
+  .odo {
+    margin: 10px 16px 0; padding: 12px 16px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    opacity: 0; animation: fadeUp 0.4s ease forwards 0.25s;
   }
-  .kpi-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px;
+  .odo-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .odo-val { font-family: var(--font-mono); font-size: 20px; color: var(--text); font-weight: 700; }
+  .odo-val span { font-size: 12px; color: var(--muted); font-family: var(--font-body); font-weight: 400; }
+
+  /* KPI grid */
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 16px 0; }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
     opacity: 0; animation: fadeUp 0.4s ease forwards;
   }
-  .kpi-card:nth-child(1) { animation-delay: 0.2s; }
-  .kpi-card:nth-child(2) { animation-delay: 0.25s; }
-  .kpi-card:nth-child(3) { animation-delay: 0.3s; }
-  .kpi-card:nth-child(4) { animation-delay: 0.35s; }
+  .kpi:nth-child(1){animation-delay:0.3s} .kpi:nth-child(2){animation-delay:0.33s}
+  .kpi:nth-child(3){animation-delay:0.36s} .kpi:nth-child(4){animation-delay:0.39s}
   .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
   .kpi-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--text); }
   .kpi-unit { font-size: 11px; color: var(--muted); font-family: var(--font-body); font-weight: 400; }
-  .kpi-trend { font-size: 11px; margin-top: 4px; }
-  .kpi-trend.up { color: #4ade80; }
-  .kpi-trend.down { color: var(--danger); }
-  .kpi-trend.neutral { color: var(--muted); }
+  .kpi-sub { font-size: 11px; margin-top: 4px; color: var(--muted); }
+  .up { color: #4ade80; } .down { color: var(--danger); }
 
   /* Chart */
-  .section { margin: 16px 16px 0; opacity: 0; animation: fadeUp 0.4s ease forwards 0.4s; }
-  .section-title {
-    font-size: 11px; color: var(--muted); text-transform: uppercase;
-    letter-spacing: 1.5px; margin-bottom: 12px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
+  .section { margin: 14px 16px 0; opacity: 0; animation: fadeUp 0.4s ease forwards 0.42s; }
+  .section-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
   .section-title span { font-family: var(--font-mono); color: var(--accent); font-size: 10px; }
-
-  .chart-wrap {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px 16px 8px;
-  }
-
+  .chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 14px 8px; }
   svg.chart { width: 100%; overflow: visible; }
 
   /* Historial */
-  .historial { margin: 16px 16px 0; opacity: 0; animation: fadeUp 0.4s ease forwards 0.5s; }
-  .row {
-    display: grid; grid-template-columns: 60px 1fr 60px 60px;
-    gap: 4px; padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px; align-items: center;
-  }
-  .row.header-row { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 14px; }
-  .row:last-child { border-bottom: none; }
+  .historial { margin: 14px 16px 0; opacity: 0; animation: fadeUp 0.4s ease forwards 0.48s; }
   .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .row { display: grid; grid-template-columns: 56px 1fr 56px 64px; gap: 4px; padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12px; align-items: center; }
+  .row.hdr { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 14px; }
+  .row:last-child { border-bottom: none; }
   .fecha { color: var(--muted); font-size: 11px; }
-  .km-cell { font-family: var(--font-mono); color: var(--accent); }
-  .rend-cell { font-family: var(--font-mono); }
-  .costo-cell { font-family: var(--font-mono); color: var(--muted); font-size: 11px; }
-  .badge {
-    display: inline-block; padding: 1px 5px; border-radius: 4px;
-    font-size: 9px; font-family: var(--font-mono); vertical-align: middle;
-    background: rgba(245,66,66,0.15); color: var(--danger); margin-left: 4px;
-  }
+  .mono { font-family: var(--font-mono); }
+  .badge { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-family: var(--font-mono); background: rgba(245,66,66,0.15); color: var(--danger); margin-left: 3px; }
+  .nota { font-size: 10px; color: var(--muted); margin: 8px 0 0 2px; }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
-    <div class="header-left">
-      <div class="logo">MOTO<span>FUEL</span></div>
-    </div>
-    <div class="status-dot" id="statusDot"></div>
+    <div class="logo">MOTO<span>FUEL</span></div>
+    <div class="dot"></div>
   </div>
-
   <div id="loading" class="loading">
     <div class="loading-bar"></div>
     <p>Cargando datos...</p>
   </div>
-
   <div id="content" style="display:none"></div>
 </div>
 
 <script>
 const SHEET_ID = '1Jf_14k1oV6ByQNEkmkfRSTE8O3yJwPZTxGTH3DYbKx0';
-const SHEET_NAME = 'Sheet1';
-const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+const API = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
 
 async function fetchData() {
-  const res = await fetch(URL);
+  const res = await fetch(API);
   const text = await res.text();
   const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-  const rows = json.table.rows;
   const data = [];
-  for (const row of rows) {
-    if (!row.c || !row.c[0]?.v && !row.c[1]?.v) continue;
+  for (const row of json.table.rows) {
+    if (!row.c) continue;
     const inicio = row.c[0]?.v;
     const termino = row.c[1]?.v;
     if (!inicio || !termino || termino <= inicio) continue;
-    const kmRec = row.c[2]?.v;
-    const reserva = row.c[3]?.v;
     const lt = row.c[5]?.v;
     const costo = row.c[6]?.v;
+    if (!lt || !costo) continue;
+    const reserva = row.c[3]?.v;
     const kmlt = row.c[7]?.v;
     const costoKm = row.c[8]?.v;
     const precioLt = row.c[9]?.v;
     const fechaRaw = row.c[10]?.v;
     let fecha = null;
     if (fechaRaw) {
-      const m = fechaRaw.match(/Date\((\d+),(\d+),(\d+)\)/);
+      const m = String(fechaRaw).match(/Date\((\d+),(\d+),(\d+)\)/);
       if (m) fecha = new Date(+m[1], +m[2], +m[3]);
     }
-    if (!lt || !costo) continue;
-    data.push({ inicio, termino, kmRec, reserva, lt, costo, kmlt, costoKm, precioLt, fecha });
+    data.push({ inicio, termino, reserva, lt, costo, kmlt, costoKm, precioLt, fecha });
   }
   return data;
 }
 
-function fmt(n) {
-  if (n == null) return '—';
-  return Math.round(n).toLocaleString('es-CL');
-}
-function fmtDec(n, d=1) {
-  if (n == null) return '—';
-  return n.toFixed(d);
-}
-function fmtFecha(d) {
-  if (!d) return '—';
-  return d.toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit' });
-}
+const fmt = n => n == null ? '—' : Math.round(n).toLocaleString('es-CL');
+const fmtD = (n, d=1) => n == null ? '—' : Number(n).toFixed(d);
+const fmtF = d => !d ? '—' : d.toLocaleDateString('es-CL', {weekday:'short', day:'numeric', month:'short'});
+const fmtF2 = d => !d ? '—' : d.toLocaleDateString('es-CL', {day:'2-digit', month:'2-digit'});
 
 function buildContent(data) {
-  const last = data[data.length - 1];
-  const prev = data[data.length - 2];
+  // Solo cargas completas con datos
+  const completas = data;
+  const last = completas[completas.length - 1];
+  const prev = completas[completas.length - 2];
+  const ultimas5 = completas.slice(-5);
 
-  // KM actuales
   const kmActual = last.termino;
 
-  // Estimación próxima reserva
-  // Promedio km hasta reserva
-  const conReserva = data.filter(d => d.reserva && d.reserva > d.inicio);
-  const avgKmReserva = conReserva.length
+  // Promedio km por carga (últimas 5)
+  const avgKmPorCarga = ultimas5.reduce((s,d) => s + (d.termino - d.inicio), 0) / ultimas5.length;
+
+  // Promedio días entre cargas (últimas cargas con fecha)
+  const conFecha = completas.filter(d => d.fecha).slice(-6);
+  let avgDias = 10;
+  if (conFecha.length >= 2) {
+    const diffs = [];
+    for (let i = 1; i < conFecha.length; i++)
+      diffs.push((conFecha[i].fecha - conFecha[i-1].fecha) / 86400000);
+    avgDias = diffs.reduce((s,v)=>s+v,0) / diffs.length;
+  }
+
+  // Próxima carga: cuando recorra promedio km desde último término
+  const kmProxCarga = last.termino + avgKmPorCarga;
+  const kmFaltanCarga = kmProxCarga - kmActual;
+  const diasFaltanCarga = Math.round((kmFaltanCarga / avgKmPorCarga) * avgDias);
+  const fechaProxCarga = new Date();
+  fechaProxCarga.setDate(fechaProxCarga.getDate() + diasFaltanCarga);
+
+  // Próxima reserva: promedio de km desde inicio hasta reserva
+  const conReserva = completas.filter(d => d.reserva && d.reserva > d.inicio);
+  const avgKmHastaReserva = conReserva.length
     ? conReserva.reduce((s,d) => s + (d.reserva - d.inicio), 0) / conReserva.length
-    : 340;
-  // La reserva se estima desde el km de inicio de la última carga
-  const kmProxReserva = Math.round(last.inicio + avgKmReserva);
+    : 320;
+  // La reserva de la carga ACTUAL empieza desde last.termino (que es el inicio de la próxima carga)
+  const kmProxReserva = Math.round(last.termino + avgKmHastaReserva);
   const kmFaltanReserva = kmProxReserva - kmActual;
+  const diasFaltanReserva = Math.round((kmFaltanReserva / avgKmPorCarga) * avgDias);
+  const fechaProxReserva = new Date();
+  fechaProxReserva.setDate(fechaProxReserva.getDate() + diasFaltanReserva);
 
-  // KPIs promedios
-  const avgKmlt = data.reduce((s,d) => s + (d.kmlt||0), 0) / data.length;
-  const avgCostoKm = data.filter(d=>d.costoKm&&d.costoKm<200).reduce((s,d) => s + d.costoKm, 0) / data.filter(d=>d.costoKm&&d.costoKm<200).length;
-  const avgLt = data.reduce((s,d) => s + d.lt, 0) / data.length;
-  const lastPrecio = last.precioLt;
+  // KPIs últimas 5
+  const kpiKmlt = ultimas5.reduce((s,d)=>s+(d.kmlt||0),0)/ultimas5.length;
+  const kpiCostoKm = ultimas5.filter(d=>d.costoKm&&d.costoKm<200).reduce((s,d)=>s+d.costoKm,0)/ultimas5.filter(d=>d.costoKm&&d.costoKm<200).length;
+  const kpiLt = ultimas5.reduce((s,d)=>s+d.lt,0)/ultimas5.length;
+  const kpiCosto = ultimas5.reduce((s,d)=>s+d.costo,0)/ultimas5.length;
+  const trendKmlt = (last.kmlt||0) - (prev.kmlt||0);
 
-  // Tendencia rendimiento
-  const trendKmlt = last.kmlt - prev.kmlt;
-
-  // Chart data: rendimiento por carga
-  const chartData = data.slice(-10);
-
-  // DOM
   const c = document.getElementById('content');
   c.style.display = 'block';
-
   c.innerHTML = `
-    <div class="km-banner">
-      <div class="km-label">Odómetro actual</div>
-      <div class="km-value">${fmt(kmActual)} <span>km</span></div>
-      <div class="km-sub">
-        <span>Última carga: ${fmtFecha(last.fecha)}</span>
-        <span>${fmtDec(last.lt)} lt · $${fmt(last.costo)}</span>
+    <div class="hero">
+      <div class="hero-label">Próxima carga estimada</div>
+      <div class="hero-date">${fmtF(fechaProxCarga)}</div>
+      <div class="hero-sub">
+        <span>en <strong>~${fmt(kmFaltanCarga)} km</strong></span>
+        <span>km <strong>${fmt(kmProxCarga)}</strong></span>
+        <span>en <strong>~${diasFaltanCarga} días</strong></span>
       </div>
     </div>
 
-    <div class="reserva-alert ${kmFaltanReserva < 80 ? 'warn' : 'ok'}">
-      <span class="reserva-icon">${kmFaltanReserva < 80 ? '⚠️' : '⛽'}</span>
-      <span>Reserva estimada en km <strong>${fmt(kmProxReserva)}</strong> · faltan ~${fmt(kmFaltanReserva)} km</span>
+    <div class="alert ${kmFaltanReserva < 60 ? 'warn' : 'ok'}">
+      <span>${kmFaltanReserva < 60 ? '⚠️' : '⛽'}</span>
+      <span>Reserva aprox. el <strong>${fmtF(fechaProxReserva)}</strong> · km ${fmt(kmProxReserva)} · faltan ~${fmt(kmFaltanReserva)} km</span>
+    </div>
+
+    <div class="odo">
+      <div>
+        <div class="odo-label">Odómetro actual</div>
+        <div class="odo-val">${fmt(kmActual)} <span>km</span></div>
+      </div>
+      <div style="text-align:right">
+        <div class="odo-label">Última carga</div>
+        <div style="font-size:12px;color:var(--muted)">${fmtF2(last.fecha)} · ${fmtD(last.lt)} lt · $${fmt(last.costo)}</div>
+      </div>
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Rendimiento prom.</div>
-        <div class="kpi-val">${fmtDec(avgKmlt)} <span class="kpi-unit">km/lt</span></div>
-        <div class="kpi-trend ${trendKmlt >= 0 ? 'up' : 'down'}">
-          ${trendKmlt >= 0 ? '▲' : '▼'} ${Math.abs(trendKmlt).toFixed(1)} última vs ant.
-        </div>
+      <div class="kpi">
+        <div class="kpi-label">Rendimiento</div>
+        <div class="kpi-val">${fmtD(kpiKmlt)} <span class="kpi-unit">km/lt</span></div>
+        <div class="kpi-sub ${trendKmlt >= 0 ? 'up' : 'down'}">${trendKmlt >= 0 ? '▲' : '▼'} ${Math.abs(trendKmlt).toFixed(1)} vs anterior</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Costo prom.</div>
-        <div class="kpi-val">$${fmtDec(avgCostoKm,0)} <span class="kpi-unit">/km</span></div>
-        <div class="kpi-trend neutral">últimas ${data.length} cargas</div>
+      <div class="kpi">
+        <div class="kpi-label">Costo/km</div>
+        <div class="kpi-val">$${fmtD(kpiCostoKm,0)} <span class="kpi-unit">/km</span></div>
+        <div class="kpi-sub">últ. 5 cargas</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Lt promedio/carga</div>
-        <div class="kpi-val">${fmtDec(avgLt)} <span class="kpi-unit">lt</span></div>
-        <div class="kpi-trend neutral">~$${fmt(data.reduce((s,d)=>s+d.costo,0)/data.length)}/carga</div>
+      <div class="kpi">
+        <div class="kpi-label">Lt/carga prom.</div>
+        <div class="kpi-val">${fmtD(kpiLt)} <span class="kpi-unit">lt</span></div>
+        <div class="kpi-sub">últ. 5 cargas</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Precio lt 93</div>
-        <div class="kpi-val">$${fmt(lastPrecio)}</div>
-        <div class="kpi-trend neutral">última carga</div>
+      <div class="kpi">
+        <div class="kpi-label">Costo/carga prom.</div>
+        <div class="kpi-val">$${fmt(kpiCosto)}</div>
+        <div class="kpi-sub">últ. 5 cargas</div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-title">Rendimiento <span>km/lt</span></div>
-      <div class="chart-wrap">
-        ${buildChart(chartData)}
-      </div>
+      <div class="section-title">Rendimiento histórico <span>km/lt</span></div>
+      <div class="chart-wrap">${buildChart(completas.slice(-10), kpiKmlt)}</div>
     </div>
 
     <div class="historial">
       <div class="section-title">Historial de cargas</div>
       <div class="table-wrap">
-        <div class="row header-row">
-          <div>Fecha</div>
-          <div>Km</div>
-          <div>km/lt</div>
-          <div>Costo</div>
-        </div>
-        ${data.slice().reverse().map(d => `
+        <div class="row hdr"><div>Fecha</div><div>Km</div><div>km/lt</div><div>Costo</div></div>
+        ${completas.slice().reverse().map(d => `
           <div class="row">
-            <div class="fecha">${fmtFecha(d.fecha)}</div>
-            <div class="km-cell">${fmt(d.termino)}${d.reserva && d.reserva > d.inicio ? '<span class="badge">R</span>' : ''}</div>
-            <div class="rend-cell" style="color:${(d.kmlt||0) > avgKmlt ? '#4ade80' : '#f54242'}">${fmtDec(d.kmlt)}</div>
-            <div class="costo-cell">$${fmt(d.costo)}</div>
+            <div class="fecha">${fmtF2(d.fecha)}</div>
+            <div class="mono" style="color:var(--accent);font-size:12px">${fmt(d.termino)}${d.reserva&&d.reserva>d.inicio?'<span class="badge">R</span>':''}</div>
+            <div class="mono" style="color:${(d.kmlt||0)>kpiKmlt?'#4ade80':'#f54242'};font-size:12px">${fmtD(d.kmlt)}</div>
+            <div class="mono" style="color:var(--muted);font-size:11px">$${fmt(d.costo)}</div>
           </div>
         `).join('')}
       </div>
+      <div class="nota">* Color rendimiento relativo al promedio últimas 5 cargas</div>
     </div>
   `;
 }
 
-function buildChart(data) {
-  const W = 360, H = 100;
+function buildChart(data, avgRef) {
+  const W = 340, H = 90;
   const vals = data.map(d => d.kmlt || 0);
-  const min = Math.min(...vals) - 1;
-  const max = Math.max(...vals) + 1;
-  const avg = vals.reduce((s,v)=>s+v,0)/vals.length;
-
-  const px = (i) => (i / (vals.length - 1)) * (W - 20) + 10;
-  const py = (v) => H - 10 - ((v - min) / (max - min)) * (H - 20);
-
-  const points = vals.map((v,i) => `${px(i)},${py(v)}`).join(' ');
-  const areaPoints = `10,${H} ` + vals.map((v,i) => `${px(i)},${py(v)}`).join(' ') + ` ${px(vals.length-1)},${H}`;
-
-  const avgY = py(avg);
-
-  const dots = vals.map((v,i) => `
-    <circle cx="${px(i)}" cy="${py(v)}" r="3" fill="${v > avg ? '#4ade80' : '#f54242'}" />
-  `).join('');
-
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#e8f542" stop-opacity="0.15"/>
-        <stop offset="100%" stop-color="#e8f542" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <line x1="10" y1="${avgY}" x2="${W-10}" y2="${avgY}" stroke="#6b7a99" stroke-width="0.5" stroke-dasharray="3 3"/>
-    <text x="${W-8}" y="${avgY - 3}" fill="#6b7a99" font-size="8" text-anchor="end">${fmtDec(avg)}</text>
-    <polygon points="${areaPoints}" fill="url(#grad)"/>
-    <polyline points="${points}" fill="none" stroke="#e8f542" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  const min = Math.min(...vals) - 1.5;
+  const max = Math.max(...vals) + 1.5;
+  const px = i => (i / (vals.length - 1)) * (W - 16) + 8;
+  const py = v => H - 8 - ((v - min) / (max - min)) * (H - 18);
+  const pts = vals.map((v,i) => `${px(i)},${py(v)}`).join(' ');
+  const area = `8,${H} ` + vals.map((v,i) => `${px(i)},${py(v)}`).join(' ') + ` ${px(vals.length-1)},${H}`;
+  const avgY = py(avgRef);
+  const dots = vals.map((v,i) => `<circle cx="${px(i)}" cy="${py(v)}" r="2.5" fill="${v>=avgRef?'#4ade80':'#f54242'}"/>`).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8f542" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#e8f542" stop-opacity="0"/>
+    </linearGradient></defs>
+    <line x1="8" y1="${avgY}" x2="${W-8}" y2="${avgY}" stroke="#6b7a99" stroke-width="0.5" stroke-dasharray="3 3"/>
+    <text x="${W-6}" y="${avgY-3}" fill="#6b7a99" font-size="7" text-anchor="end">${fmtD(avgRef)}</text>
+    <polygon points="${area}" fill="url(#g)"/>
+    <polyline points="${pts}" fill="none" stroke="#e8f542" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
     ${dots}
   </svg>`;
 }
@@ -393,11 +320,7 @@ function buildChart(data) {
   } catch(e) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = 'block';
-    document.getElementById('content').innerHTML = `
-      <div class="error-box">
-        Error al cargar datos: ${e.message}<br><br>
-        Asegúrate que el Sheet esté compartido públicamente como Lector.
-      </div>`;
+    document.getElementById('content').innerHTML = `<div class="error-box">Error: ${e.message}<br><br>Asegúrate que el Sheet esté compartido como Lector público.</div>`;
   }
 })();
 </script>
