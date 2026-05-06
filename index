@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⛽ MotoFuel — Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #aaa;
+            letter-spacing: 0.5px;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .hero-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .hero-unit {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ALERTA RESERVA */
+        .alert-reserva {
+            background: #f39c12;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .alert-reserva.danger {
+            background: #e74c3c;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* GRID KPIs */
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .kpi {
+            background: rgba(255,255,255,0.08);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            text-align: center;
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .kpi-unit {
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        /* GRÁFICO */
+        .chart-section {
+            background: rgba(255,255,255,0.08);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            font-size: 13px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 240px;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        .chart-legend {
+            font-size: 11px;
+            color: #bbb;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        /* HISTORIAL */
+        .historial-section {
+            background: rgba(255,255,255,0.08);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .historial-title {
+            font-size: 13px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .historial-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .historial-table thead {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .historial-table th {
+            padding: 12px;
+            text-align: left;
+            color: #aaa;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .historial-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .historial-table tr:hover {
+            background: rgba(255,255,255,0.04);
+        }
+
+        .badge-reserva {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .rendimiento-alto {
+            color: #2ecc71;
+            font-weight: 600;
+        }
+
+        .rendimiento-bajo {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #aaa;
+            padding: 30px;
+            font-size: 14px;
+        }
+
+        .nota {
+            background: rgba(52, 152, 219, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+            font-size: 12px;
+            color: #bbb;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⛽ MotoFuel</h1>
+            <p class="subtitle">Dashboard de Consumo de Combustible</p>
+        </header>
+
+        <div id="hero" class="hero">
+            <div class="hero-label">Próxima carga estimada en</div>
+            <div class="hero-value" id="heroValue">—</div>
+            <div class="hero-unit" id="heroUnit">km restantes</div>
+        </div>
+
+        <div id="alertReserva" class="alert-reserva" style="display:none;"></div>
+
+        <div class="kpis">
+            <div class="kpi">
+                <div class="kpi-label">Rendimiento (últimas 5 con reserva)</div>
+                <div class="kpi-value" id="kpiRendimiento">—</div>
+                <div class="kpi-unit">km/lt</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-label">Costo por km</div>
+                <div class="kpi-value" id="kpiCostoKm">—</div>
+                <div class="kpi-unit">$/km</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-label">Litros por carga</div>
+                <div class="kpi-value" id="kpiLitros">—</div>
+                <div class="kpi-unit">lt</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-label">Costo por carga</div>
+                <div class="kpi-value" id="kpiCosto">—</div>
+                <div class="kpi-unit">$</div>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-title">Rendimiento por carga (últimas 15 con reserva)</div>
+            <div class="chart-container">
+                <canvas id="chartRendimiento"></canvas>
+            </div>
+            <div class="chart-legend" id="chartLegend"></div>
+            <div class="nota">
+                📊 <strong>Nota:</strong> El gráfico y los KPIs solo incluyen cargas donde se activó la RESERVA,
+                ya que son las que reflejan el consumo real de tu moto bajo condiciones comparables.
+                Cargas sin reserva (paradas intermedias) se registran pero no afectan el cálculo de autonomía.
+            </div>
+        </div>
+
+        <div class="historial-section">
+            <div class="historial-title">Historial Completo</div>
+            <table class="historial-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Km</th>
+                        <th>Km/lt</th>
+                        <th>$/km</th>
+                        <th>Costo</th>
+                    </tr>
+                </thead>
+                <tbody id="historialBody">
+                    <tr><td colspan="5" class="no-data">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        const SHEET_ID = '1Jf_14k1oV6ByQNEkmkfRSTE8O3yJwPZTxGTH3DYbKx0';
+        const DATOS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
+
+        let chart = null;
+
+        async function cargarDatos() {
+            try {
+                const response = await fetch(DATOS_URL);
+                const text = await response.text();
+                const json = JSON.parse(text.substring(47).slice(0, -2));
+                
+                const filas = json.table.rows
+                    .filter(r => r.c[1] && r.c[1].v)
+                    .map(r => ({
+                        inicio:    r.c[0] ? r.c[0].v : null,
+                        termino:   r.c[1] ? r.c[1].v : null,
+                        kmRecorr:  r.c[2] ? r.c[2].v : null,
+                        reserva:   r.c[3] ? r.c[3].v : null,
+                        kmSinReserva: r.c[4] ? r.c[4].v : null,
+                        litros:    r.c[5] ? r.c[5].v : null,
+                        costo:     r.c[6] ? r.c[6].v : null,
+                        kmLt:      r.c[7] ? r.c[7].v : null,
+                        costoKm:   r.c[8] ? r.c[8].v : null,
+                        precioLt:  r.c[9] ? r.c[9].v : null,
+                        fecha:     r.c[10] ? r.c[10].v : null
+                    }));
+
+                renderizar(filas);
+            } catch (e) {
+                console.error('Error cargando datos:', e);
+                document.getElementById('historialBody').innerHTML = 
+                    '<tr><td colspan="5" class="no-data">Error al cargar datos</td></tr>';
+            }
+        }
+
+        function renderizar(filas) {
+            // === CALCULAR KPIS SOLO CON RESERVA ===
+            const conReserva = filas.filter(f => f.reserva && f.reserva !== 0 && f.reserva !== '');
+
+            let avgKmLt = 0, avgCostoKm = 0, avgLitros = 0, avgCosto = 0;
+
+            if (conReserva.length >= 1) {
+                const ultimas5 = conReserva.slice(-5);
+                avgKmLt = ultimas5.reduce((s, f) => s + (f.kmLt || 0), 0) / ultimas5.length;
+                avgCostoKm = ultimas5.reduce((s, f) => s + (f.costoKm || 0), 0) / ultimas5.length;
+                avgLitros = ultimas5.reduce((s, f) => s + (f.litros || 0), 0) / ultimas5.length;
+                avgCosto = ultimas5.reduce((s, f) => s + (f.costo || 0), 0) / ultimas5.length;
+            }
+
+            // === HERO: KM RESTANTES HASTA PRÓXIMA CARGA ===
+            const ultimoKm = filas[filas.length - 1]?.termino || 0;
+            const kmRestantes = Math.round(avgKmLt * avgLitros);
+            document.getElementById('heroValue').textContent = kmRestantes.toLocaleString('es-CL');
+            document.getElementById('heroUnit').textContent = 'km restantes';
+
+            // === ALERTA RESERVA ===
+            const alertDiv = document.getElementById('alertReserva');
+            if (kmRestantes > 0 && kmRestantes < 60) {
+                alertDiv.textContent = '⚠️ Quedan menos de 60 km — ¡Carga pronto!';
+                alertDiv.classList.add('danger');
+                alertDiv.style.display = 'block';
+            } else if (kmRestantes > 0) {
+                alertDiv.textContent = '✅ Autonomía normal';
+                alertDiv.classList.remove('danger');
+                alertDiv.style.display = 'block';
+            } else {
+                alertDiv.style.display = 'none';
+            }
+
+            // === KPIs ===
+            document.getElementById('kpiRendimiento').textContent = avgKmLt.toFixed(1);
+            document.getElementById('kpiCostoKm').textContent = Math.round(avgCostoKm).toLocaleString('es-CL');
+            document.getElementById('kpiLitros').textContent = avgLitros.toFixed(1);
+            document.getElementById('kpiCosto').textContent = Math.round(avgCosto).toLocaleString('es-CL');
+
+            // === GRÁFICO ===
+            const ultimas15 = conReserva.slice(-15);
+            renderChart(ultimas15, avgKmLt);
+
+            // === HISTORIAL ===
+            renderHistorial(filas);
+        }
+
+        function renderChart(datos, promedio) {
+            const ctx = document.getElementById('chartRendimiento').getContext('2d');
+            
+            if (chart) chart.destroy();
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: datos.map((_, i) => i + 1),
+                    datasets: [{
+                        label: 'Km/lt',
+                        data: datos.map(d => d.kmLt || 0),
+                        backgroundColor: datos.map(d => {
+                            const val = d.kmLt || 0;
+                            if (val > promedio) return '#2ecc71';
+                            if (val < promedio) return '#e74c3c';
+                            return '#f39c12';
+                        }),
+                        borderColor: 'rgba(255,255,255,0.2)',
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ctx.parsed.y.toFixed(1) + ' km/lt'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#aaa' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#aaa' }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('chartLegend').textContent = 
+                `Promedio últimas 5: ${promedio.toFixed(1)} km/lt`;
+        }
+
+        function renderHistorial(filas) {
+            const tbody = document.getElementById('historialBody');
+            
+            if (filas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">Sin datos</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filas.map(f => `
+                <tr>
+                    <td>${f.fecha || '—'}</td>
+                    <td>${f.termino ? f.termino.toLocaleString('es-CL') : '—'}</td>
+                    <td>
+                        <span class="${(f.kmLt || 0) > 38 ? 'rendimiento-alto' : 'rendimiento-bajo'}">
+                            ${f.kmLt ? f.kmLt.toFixed(1) : '—'}
+                        </span>
+                        ${f.reserva && f.reserva !== 0 ? ' <span class="badge-reserva">R</span>' : ''}
+                    </td>
+                    <td>$${f.costoKm ? Math.round(f.costoKm).toLocaleString('es-CL') : '—'}</td>
+                    <td>$${f.costo ? f.costo.toLocaleString('es-CL') : '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+        cargarDatos();
+        setInterval(cargarDatos, 60000);
+    </script>
+</body>
+</html>
