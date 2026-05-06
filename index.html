@@ -262,10 +262,8 @@ function buildContent(data) {
   const avgKmReserva = conReserva.length
     ? conReserva.reduce((s,d) => s + (d.reserva - d.inicio), 0) / conReserva.length
     : 340;
-  const kmProxReserva = Math.round(last.termino - last.inicio > 0
-    ? last.termino + avgKmReserva - (kmActual - last.inicio)
-    : last.termino + avgKmReserva);
-
+  // La reserva se estima desde el km de inicio de la última carga
+  const kmProxReserva = Math.round(last.inicio + avgKmReserva);
   const kmFaltanReserva = kmProxReserva - kmActual;
 
   // KPIs promedios
@@ -315,7 +313,7 @@ function buildContent(data) {
       <div class="kpi-card">
         <div class="kpi-label">Lt promedio/carga</div>
         <div class="kpi-val">${fmtDec(avgLt)} <span class="kpi-unit">lt</span></div>
-        <div class="kpi-trend neutral">~${fmt(avgLt * lastPrecio)}/carga</div>
+        <div class="kpi-trend neutral">~$${fmt(data.reduce((s,d)=>s+d.costo,0)/data.length)}/carga</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Precio lt 93</div>
