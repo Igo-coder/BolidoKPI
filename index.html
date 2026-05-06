@@ -104,7 +104,7 @@
   /* Historial */
   .historial { margin: 14px 16px 0; opacity: 0; animation: fadeUp 0.4s ease forwards 0.48s; }
   .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .row { display: grid; grid-template-columns: 56px 1fr 56px 64px; gap: 4px; padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12px; align-items: center; }
+  .row { display: grid; grid-template-columns: 52px 1fr 52px 52px 60px; gap: 4px; padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12px; align-items: center; }
   .row.hdr { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 14px; }
   .row:last-child { border-bottom: none; }
   .fecha { color: var(--muted); font-size: 11px; }
@@ -273,12 +273,13 @@ function buildContent(data) {
     <div class="historial">
       <div class="section-title">Historial de cargas</div>
       <div class="table-wrap">
-        <div class="row hdr"><div>Fecha</div><div>Km</div><div>km/lt</div><div>Costo</div></div>
+        <div class="row hdr"><div>Fecha</div><div>Km</div><div>km/lt</div><div>$/km</div><div>Costo</div></div>
         ${completas.slice().reverse().map(d => `
           <div class="row">
             <div class="fecha">${fmtF2(d.fecha)}</div>
             <div class="mono" style="color:var(--accent);font-size:12px">${fmt(d.termino)}${d.reserva&&d.reserva>d.inicio?'<span class="badge">R</span>':''}</div>
             <div class="mono" style="color:${(d.kmlt||0)>kpiKmlt?'#4ade80':'#f54242'};font-size:12px">${fmtD(d.kmlt)}</div>
+            <div class="mono" style="color:var(--muted);font-size:11px">${d.costoKm&&d.costoKm<200?'$'+fmtD(d.costoKm,0):'—'}</div>
             <div class="mono" style="color:var(--muted);font-size:11px">$${fmt(d.costo)}</div>
           </div>
         `).join('')}
@@ -306,6 +307,7 @@ function buildChart(data, avgRef) {
     </linearGradient></defs>
     <line x1="8" y1="${avgY}" x2="${W-8}" y2="${avgY}" stroke="#6b7a99" stroke-width="0.5" stroke-dasharray="3 3"/>
     <text x="${W-6}" y="${avgY-3}" fill="#6b7a99" font-size="7" text-anchor="end">${fmtD(avgRef)}</text>
+    <text x="${px(vals.length-1)}" y="${py(vals[vals.length-1])-8}" fill="#e8f542" font-size="11" text-anchor="middle" font-weight="700">${fmtD(vals[vals.length-1])}</text>
     <polygon points="${area}" fill="url(#g)"/>
     <polyline points="${pts}" fill="none" stroke="#e8f542" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
     ${dots}
